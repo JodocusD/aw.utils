@@ -181,11 +181,8 @@ gh_fill <- function(input, output, session) {
                                      list(reportQuery =
                                             list(dimensions = 'DATE',
                                                  dimensions = 'AD_UNIT_NAME',
-                                                 #dimensions = 'PARENT_AD_UNIT_ID',
                                                  dimensions = 'LINE_ITEM_TYPE',
-                                                 #dimensions = 'COUNTRY_NAME',
                                                  adUnitView = 'FLAT',
-                                                 #columns = 'TOTAL_LINE_ITEM_LEVEL_IMPRESSIONS',
                                                  columns = 'AD_SERVER_IMPRESSIONS',
                                                  columns = 'AD_EXCHANGE_IMPRESSIONS',
                                                  startDate = dateconverterRdfpJst(Sys.Date() - 45),
