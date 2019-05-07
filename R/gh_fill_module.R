@@ -89,12 +89,12 @@ tagList(
 ),
 # Show a plot of the generated distribution
 fluidRow(
-  box(title = "Percent of Ghanaian Impressions", width = 12,
+  shinydashboard::box(title = "Percent of Ghanaian Impressions", width = 12,
       plotOutput(ns("pct_plot"), height = "200px")
   )
 ),
 fluidRow(
-  box(title = "Absolute Numbers", width = 12,
+  shinydashboard::box(title = "Absolute Numbers", width = 12,
       plotOutput(ns("abs_plot"), height = "200px")
   )
 ))
@@ -116,56 +116,55 @@ gh_fill <- function(input, output, session) {
   rv <- reactiveValues(df = df_ghfill_mock_creation())
 
   df_grouped <- reactive({
-    var_dorw <- sym(input$dorw)
-    var_facet <- sym(input$facet)
+    var_dorw <- dplyr::sym(input$dorw)
+    var_facet <- dplyr::sym(input$facet)
 
     x <- rv$df %>%
       {if(input$facet == "null") {
-        group_by(., !!var_dorw, advertiser)
-      } else {group_by(., !!var_dorw, advertiser, !!var_facet) }
+        dplyr::group_by(., !!var_dorw, advertiser)
+      } else {dplyr::group_by(., !!var_dorw, advertiser, !!var_facet) }
       } %>%
-      summarise(impressions = sum(impr)) %>%
-      ungroup()
+      dplyr::summarise(impressions = sum(impr)) %>%
+      dplyr::ungroup()
 
     return(x)
   })
 
 
   output$pct_plot <- renderPlot({
-    var_dorw <- sym(input$dorw)
-    var_facet <- sym(input$facet)
+    var_dorw <- dplyr::sym(input$dorw)
+    var_facet <- dplyr::sym(input$facet)
 
     df_grouped() %>%
-      ggplot(aes(!!var_dorw, impressions)) +
-      geom_col(aes(fill = fct_rev(advertiser), colour = fct_rev(advertiser)),position = position_fill()) +
+      ggplot2::ggplot(aes(!!var_dorw, impressions)) +
+      ggplot2::geom_col(aes(fill = forcats::fct_rev(advertiser), colour = forcats::fct_rev(advertiser)),position = ggplot2::position_fill()) +
       #scale_x_date(date_breaks = "1 days", date_labels = "%b %d") +
-      theme_bw() +
-      scale_y_continuous(labels = percent_format()) +
+      ggplot2::theme_bw() +
+      ggplot2::scale_y_continuous(labels = scales::percent_format()) +
       viridis::scale_fill_viridis(discrete = TRUE, begin = 0.1, end = 0.9)+
       viridis::scale_colour_viridis(discrete = TRUE, begin = 0.1, end = 0.9, guide = "none")+
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs(title = "", y = "% of Impressions", fill = "Advertiser", x = NULL) +
-      {if(var_facet == "unit")facet_wrap(~unit, scales = 'free_y', ncol = 4)} +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+      ggplot2::labs(title = "", y = "% of Impressions", fill = "Advertiser", x = NULL) +
+      {if(var_facet == "unit")ggplot2::facet_wrap(~unit, scales = 'free_y', ncol = 4)} +
       NULL
   })
 
   output$abs_plot <- renderPlot({
-    var_dorw <- sym(input$dorw)
-    var_facet <- sym(input$facet)
-    var_stack <- sym(input$stack)
+    var_dorw <- dplyr::sym(input$dorw)
+    var_facet <- dplyr::sym(input$facet)
+    var_stack <- dplyr::sym(input$stack)
 
     df_grouped() %>%
-      ggplot(aes(!!var_dorw, impressions, fill = fct_rev(advertiser), colour = fct_rev(advertiser))) +
-      {if(var_stack == "side-by-side"){geom_col(position = position_dodge())}else{geom_col(position = position_stack())}} +
-      labs(title = "", y = "Impressions x 1000", fill = "Advertiser", x = NULL) +
-      scale_y_continuous(labels = comma_format()) +
+      ggplot2::ggplot(aes(!!var_dorw, impressions, fill = forcats::fct_rev(advertiser), colour = forcats::fct_rev(advertiser))) +
+      {if(var_stack == "side-by-side"){ggplot2::geom_col(position = ggplot2::position_dodge())}else{ggplot2::geom_col(position = ggplot2::position_stack())}} +
+      ggplot2::labs(title = "", y = "Impressions x 1000", fill = "Advertiser", x = NULL) +
+      ggplot2::scale_y_continuous(labels = scales::comma_format()) +
       #scale_x_date(date_breaks = "1 days", date_labels = "%b %d") +
       viridis::scale_fill_viridis(discrete = TRUE, begin = 0.1, end = 0.9)+
       viridis::scale_colour_viridis(discrete = TRUE, begin = 0.1, end = 0.9, guide = "none")+
-
-      theme_bw() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      {if(var_facet == "unit")facet_wrap(~unit, scales = 'free_y', ncol = 4)} +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+      {if(var_facet == "unit")ggplot2::facet_wrap(~unit, scales = 'free_y', ncol = 4)} +
       NULL
   })
 
