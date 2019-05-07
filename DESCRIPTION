@@ -20,3 +20,5 @@ Imports:
     magrittr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+URL: https://github.com/JodocusD/aw.utils
+BugReports: https://github.com/JodocusD/aw.utils/issues
